@@ -39,6 +39,13 @@ var ANDROID_PACKAGE = 'com.EvgeniiBudanov.RealPottery';
 var IOS_APP_ID = '6806569344';        // Cozy Pottery: Clay Studio
 var IOS_PROVIDER_TOKEN = '129378616'; // pt= из App Store Connect → App Analytics → Campaigns
 
+// Счётчик кликов. Пусто — счёта нет, редирект мгновенный.
+// Заполнить, если нужна своя цифра переходов раньше, чем её покажут консоли магазинов.
+// Скрипт должен успеть отправить событие до ухода со страницы — отсюда REDIRECT_DELAY_MS.
+var ANALYTICS_SRC  = '';   // напр. '//gc.zgo.at/count.js' (GoatCounter)
+var ANALYTICS_ATTR = {};   // напр. {'data-goatcounter': 'https://ИМЯ.goatcounter.com/count'}
+var REDIRECT_DELAY_MS = 500;
+
 // Словарь кампаний. Держать метки здесь, а не раскидывать по постам:
 // так отчёты в консоли не расползаются на десять написаний одного канала.
 var CAMPAIGNS = {
@@ -73,9 +80,22 @@ var isIOS = /iPad|iPhone|iPod/.test(ua) ||
             (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPadOS
 var isAndroid = /Android/.test(ua);
 
-if (isAndroid) location.replace(playUrl);
-else if (isIOS && appStoreUrl) location.replace(appStoreUrl);
-else document.querySelector('p').textContent = 'Выбери магазин:';
+var target = isAndroid ? playUrl : (isIOS && appStoreUrl ? appStoreUrl : '');
+
+if (ANALYTICS_SRC) {
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = ANALYTICS_SRC;
+  for (var k in ANALYTICS_ATTR) s.setAttribute(k, ANALYTICS_ATTR[k]);
+  document.head.appendChild(s);
+}
+
+if (target) {
+  // Задержка только когда есть что отправлять: иначе магазин открывается сразу.
+  setTimeout(function () { location.replace(target); }, ANALYTICS_SRC ? REDIRECT_DELAY_MS : 0);
+} else {
+  document.querySelector('p').textContent = 'Выбери магазин:';
+}
 </script>
 </body>
 </html>
