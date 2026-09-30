@@ -49,7 +49,10 @@ var REDIRECT_DELAY_MS = 500;
 // Словарь кампаний. Держать метки здесь, а не раскидывать по постам:
 // так отчёты в консоли не расползаются на десять написаний одного канала.
 var CAMPAIGNS = {
-  pupirka: { source: 'telegram', medium: 'social', campaign: 'pupirka' }
+  pupirka:   { source: 'telegram',  medium: 'social', campaign: 'pupirka' },
+  instagram: { source: 'instagram', medium: 'social', campaign: 'instagram' },
+  tiktok:    { source: 'tiktok',    medium: 'social', campaign: 'tiktok' },
+  shorts:    { source: 'youtube',   medium: 'social', campaign: 'shorts' }
 };
 
 var raw = (new URLSearchParams(location.search).get('c') || '').toLowerCase();
